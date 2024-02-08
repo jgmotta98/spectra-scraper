@@ -1,0 +1,17 @@
+{
+  "name": "venv-tcc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "batch_test.js",
+  "scripts": {
+    "start": "node batch_test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "jimp": "^0.22.10",
+    "path": "^0.12.7"
+  }
+}
