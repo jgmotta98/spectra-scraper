@@ -1,5 +1,5 @@
 import pytesseract
-from PIL import Image, ImageEnhance, ImageDraw
+from PIL import Image, ImageEnhance
 import pyautogui
 import os
 import csv
