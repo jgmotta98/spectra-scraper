@@ -3,6 +3,8 @@ import os
 import pytesseract
 import re
 
+#TODO: refatorar.
+
 CROPPED_PATH = r'..\IR_spectral_data\mod_img_data'
 IMGS_PATH = r'..\IR_spectral_data\img_Data'
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
