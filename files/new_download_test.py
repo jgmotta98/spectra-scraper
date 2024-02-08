@@ -13,6 +13,7 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 
 #TODO: consertar o lance dos dados repetidos, não está funcionando.
 #TODO: botar nomes de colunas nos arquivos csv.
+#TODO: refatorar.
 
 def get_sbds_no(coord_to_save):
     sdbs_no = pyautogui.screenshot(region=coord_to_save)

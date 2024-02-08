@@ -7,7 +7,9 @@ import pandas as pd
 import os
 import re
 
+#TODO: implementar paralelismo.
 #TODO: diminuir o tempo de espera de algumas partes da extração.
+#TODO: refatorar.
 
 wd = webdriver.Chrome()
 DATABASE_PATH = r'..\IR_spectral_data\comp_sdbs_no.csv'
