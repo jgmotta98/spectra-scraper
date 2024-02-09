@@ -10,7 +10,7 @@ To utilize the SDBSDataExtractor, it is essential to access both the [tesseract 
 
 ### WebPlotDigitizer
 
-To execute the `*.js` file, accessing the [WebPlotDigitizer tutorial](https://github.com/ankitrohatgi/WebPlotDigitizer/blob/master/node_examples/README.md) for application call setup is required.
+To setup and execute the `*.js` file, is required to access the [WebPlotDigitizer tutorial](https://github.com/ankitrohatgi/WebPlotDigitizer/blob/master/node_examples/README.md).
 
 ## SDBSDataExtractor
 
@@ -26,7 +26,7 @@ Following this, you'll need to verify the validity of the mouse clicks via the c
 
 To ensure the clicks were accurately placed, you can inspect the [temporary files folder](/temp_files/), which should contain two images: one displaying the SDBS numbers and the other showing the compound names.
 
-The numbers and names will be sequentially saved to the existing [csv file](/IR_spectral_data/comp_sdbs_no.csv). To conclude the data extraction process, provide confirmation through the console:
+The numbers and names will be sequentially saved to the existing [CSV file](/IR_spectral_data/comp_sdbs_no.csv). To conclude the data extraction process, provide confirmation through the console:
 
     Continue capturing? (y/n)
 

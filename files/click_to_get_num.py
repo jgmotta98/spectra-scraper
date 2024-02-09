@@ -15,20 +15,19 @@ class SDBSDataExtractor:
     def on_click(self, x, y, button, pressed):
         if pressed:
             self.click_positions.append((x, y))
-            if len(self.click_positions) == 1:
-                print_label = "top-left for SDBS No"
-            elif len(self.click_positions) == 2:
-                print_label = "bottom-right for SDBS No"
-            elif len(self.click_positions) == 3:
-                print_label = "top-left for Compound Name"
-            elif len(self.click_positions) == 4:
-                print_label = "bottom-right for Compound Name"
-                print(f"Clicked on {print_label}")
-                return False
-            else:
-                print_label = ""
+            labels = [
+                "top-left for SDBS No",
+                "bottom-right for SDBS No",
+                "top-left for Compound Name",
+                "bottom-right for Compound Name"
+            ]
+            
+            current_label = labels[len(self.click_positions) - 1] if len(self.click_positions) <= len(labels) else ""
+            
+            print(f"Clicked on {current_label}")
 
-            print(f"Clicked on {print_label}")
+            if len(self.click_positions) == 4:
+                return False
 
     @staticmethod
     def get_sdbs_no_value(sdbs_img_path):
@@ -99,26 +98,36 @@ class SDBSDataExtractor:
                 if not (row in existing_data or row_temp in existing_data):
                     writer.writerow(row)
 
+    def capture_clicks(self):
+        print('Listening for mouse clicks. Complete four clicks to proceed.')
+        with mouse.Listener(on_click=self.on_click) as listener:
+            listener.join()
+
+
+    def get_click_regions(self):
+        regions = [
+            (self.click_positions[0][0], self.click_positions[0][1], 
+             self.click_positions[1][0] - self.click_positions[0][0], 
+             self.click_positions[1][1] - self.click_positions[0][1]),
+            (self.click_positions[2][0], self.click_positions[2][1], 
+             self.click_positions[3][0] - self.click_positions[2][0], 
+             self.click_positions[3][1] - self.click_positions[2][1])
+        ]
+        return regions
+    
+    def process_clicks(self):
+        regions = self.get_click_regions()
+        name_list = self.get_sbds_no(regions[0])
+        name_comp_list = self.get_sdbs_name(regions[1])
+        return name_list, name_comp_list
+
     def run(self):
         while True:
             self.click_positions.clear()
             while True:
                 try:
-                    print('Listening for mouse clicks. Complete four clicks to proceed.')
-                    with mouse.Listener(on_click=self.on_click) as listener:
-                        listener.join()
-
-                    merged_as_specified = [(self.click_positions[0][0], 
-                                            self.click_positions[0][1], 
-                                            self.click_positions[1][0] - self.click_positions[0][0], 
-                                            self.click_positions[1][1] - self.click_positions[0][1]),
-                                            (self.click_positions[2][0], 
-                                            self.click_positions[2][1], 
-                                            self.click_positions[3][0] - self.click_positions[2][0], 
-                                            self.click_positions[3][1] - self.click_positions[2][1])]
-
-                    name_list = self.get_sbds_no(merged_as_specified[0])
-                    name_comp_list = self.get_sdbs_name(merged_as_specified[1])
+                    self.capture_clicks()
+                    name_list, name_comp_list = self.process_clicks()
 
                     do_retry = input('Retry the clicks? (y/n): ')
                     if do_retry != 'y':
