@@ -9,7 +9,8 @@ You can access the tutorial [here](./files/README.md) and follow the step by ste
 ## Credits
 
 - Numerical data extraction made with standard [WebPlotDigitizer](https://github.com/ankitrohatgi/WebPlotDigitizer/tree/master).
-- Data extracted from the [Spectral Database for Organic Compounds (SBDS)](https://sdbs.db.aist.go.jp/sdbs/cgi-bin/cre_index.cgi).
+- Data extracted from the [Spectral Database for Organic Compounds (SDBS)](https://sdbs.db.aist.go.jp/sdbs/cgi-bin/cre_index.cgi).
 
 ## License
+
 [MIT](./LICENSE) © Spectra Scraper
