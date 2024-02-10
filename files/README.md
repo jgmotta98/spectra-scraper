@@ -42,9 +42,9 @@ Make sure that the compound has a valid IR spectra; in the absence of such data,
 
 Following the download, the images will be formatted for compatibility with WebPlotDigitizer's code.
 
-The [reference project](..\IR_spectral_data\reference_project.json) enables batch extraction and can be tailored through the WebPlotDigitizer application. Adjustments can be made by saving a new `.json` file.
-
 ## batch_extraction.js
+
+The [reference project](..\IR_spectral_data\reference_project.json) enables batch extraction and can be tailored through the WebPlotDigitizer application. Adjustments can be made by saving a new `.json` file.
 
 Once you have installed all necessary dependencies and additional packages as explained in the [WebPlotDigitizer](#webplotdigitizer) section, execute the following command:
 
