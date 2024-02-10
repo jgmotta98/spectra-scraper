@@ -1,4 +1,4 @@
 node_modules/
 WebPlotDigitizer-4.6-win32-x64/
 .venv/
-.files/package-lock.json
+package-lock.json
