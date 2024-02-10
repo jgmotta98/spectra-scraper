@@ -10,6 +10,7 @@ class SDBSDataExtractor:
         self.temp_path = '..\\temp_files'
         self.comp_data_path = '..\\IR_spectral_data\\comp_sdbs_no.csv'
         self.click_positions = []
+        #Change according to your path
         pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
     def _on_click(self, x, y, button, pressed):

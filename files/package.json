@@ -1,14 +1,14 @@
 {
-  "name": "venv-tcc",
-  "version": "1.0.0",
-  "description": "",
-  "main": "batch_test.js",
+  "name": "extraction_studies",
+  "version": "0.1.0",
+  "description": "Numerical data extraction with WebPlotDigitizer.",
+  "main": "batch_extraction.js",
   "scripts": {
-    "start": "node batch_test.js"
+    "start": "node batch_extraction.js"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "fs": "^0.0.1-security",
     "jimp": "^0.22.10",

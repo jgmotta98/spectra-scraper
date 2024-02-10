@@ -29,7 +29,7 @@ function getArgvValue(args, arg) {
 
 
 function digitizeImage(file, img) {
-    console.log("Reading: " + file);
+    //console.log("Reading: " + file);
 
     // load base project
     let plotData = new wpd.PlotData();
@@ -88,3 +88,4 @@ function doAllImages() {
 
 // read base project, then digitize all images in imagesPath
 doAllImages();
+console.log("Extraction done!")

@@ -3,27 +3,37 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.chrome.options import Options
 import pandas as pd
 import os
 import re
 from PIL import Image, ImageDraw
+from safeloader import Loader
+import subprocess
 
-#TODO: implementar paralelismo.
+#TODO: implement paralelism.
+#TODO: unify all codes.
 
 class SDBSPageScraper:
 
     def __init__(self):
-        self.wd = webdriver.Chrome()
+        chrome_options = Options()
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('log-level=2')
+        chrome_options.add_argument("start-maximized")
+        chrome_options.set_capability("browserVersion", "117") # New versions of chrome for some reason dont remove dev logs.
+        chrome_options.add_experimental_option('excludeSwitches', ['enable-logging']) # Removes annoying dev logs.
+        self.wd = webdriver.Chrome(options=chrome_options)
         self.database_path = r'..\IR_spectral_data\comp_sdbs_no.csv'
         self.base_url_img = "https://sdbs.db.aist.go.jp/sdbs/cgi-bin/IMG.cgi?imgdir=ir&amp;fname=NIDA"
         self.base_url = "https://sdbs.db.aist.go.jp/sdbs/cgi-bin/landingpage?sdbsno="
         self.spectral_path = r'..\IR_spectral_data\img_data'
         self.agree_clicked = False
+        self.page_scraper_loader = Loader(desc='Downloading images')
 
     def _get_nida(self, wd):
         try:
-            wait = WebDriverWait(wd, 1)
-            ir_elements = wait.until(EC.presence_of_all_elements_located((By.XPATH, "//a[contains(text(), 'IR')]")))
+            ir_elements = WebDriverWait(wd, 10).until(EC.presence_of_all_elements_located((By.XPATH, "//a[contains(text(), 'IR')]")))
             for element in ir_elements:
                 match = re.search(r'NIDA-(\d+)', element.text)
                 if match:
@@ -39,9 +49,9 @@ class SDBSPageScraper:
         self.wd.get(url_img)
         file_path = os.path.join(self.spectral_path, f"{name}.png")
         try:
-            image_element = WebDriverWait(self.wd, 2).until(EC.presence_of_element_located((By.TAG_NAME, "img")))
+            image_element = WebDriverWait(self.wd, 10).until(EC.presence_of_element_located((By.TAG_NAME, "img")))
             ActionChains(self.wd).move_to_element(image_element).perform()
-            WebDriverWait(self.wd, 2).until(lambda d: image_element.get_attribute('complete'))
+            WebDriverWait(self.wd, 10).until(lambda d: image_element.get_attribute('complete'))
             image_element.screenshot(file_path)
             return 'complete'
         except Exception as e:
@@ -52,8 +62,7 @@ class SDBSPageScraper:
         self.wd.get(url)
         if not self.agree_clicked:
             try:
-                wait = WebDriverWait(self.wd, 5)
-                agree_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "agree_button")))
+                agree_button = WebDriverWait(self.wd, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "agree_button")))
                 agree_button.click()
                 self.agree_clicked = True
                 self.wd.get(url)
@@ -78,12 +87,15 @@ class SDBSPageScraper:
         database_df['completion'] = database_df.apply(self._scrape_info, axis=1)
 
     def run(self):
+        self.page_scraper_loader.start()
         self._set_database_link()
         self.wd.quit()
+        self.page_scraper_loader.stop()
 
 class SpectraMod:
 
     def __init__(self):
+        self.spectra_mod_loader = Loader(desc='Modding images')
         self.cropped_path = r'..\IR_spectral_data\mod_img_data'
         self.imgs_path = r'..\IR_spectral_data\img_Data'
 
@@ -136,11 +148,14 @@ class SpectraMod:
                 os.remove(true_image_name_path)
 
     def run(self):
+        self.spectra_mod_loader.start()
         imgs_list = self._main_img_mod()
         self._check_img_existence(imgs_list)
+        self.spectra_mod_loader.stop()
 
 if __name__ == "__main__":
     sbds_page_scraper = SDBSPageScraper()
     sbds_page_scraper.run()
     spectra_mod = SpectraMod()
     spectra_mod.run()
+    subprocess.check_call(['npm', 'start'], shell=True)
