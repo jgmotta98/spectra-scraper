@@ -18,7 +18,7 @@ If you possess the SDBS numbers for the compounds of interest, utilizing this fu
 
 Upon executing this class, a message will be displayed in the console indicating that the system is now awaiting mouse clicks. Please follow the mouse click procedure as illustrated in the gif provided below.
 
-![Clicking example](/tutorial_files/click_part.gif)
+https://github.com/jgmotta98/spectra-scraper/assets/90492274/c1ed7ead-2603-4161-8d14-7250cd6adecc
 
 Following this, you'll need to verify the validity of the mouse clicks via the console:
 
