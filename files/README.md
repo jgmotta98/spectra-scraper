@@ -14,7 +14,7 @@ To setup and execute the `*.js` file, is required to access the [WebPlotDigitize
 
 ## SDBSDataExtractor
 
-If you possess the SDBS numbers for the compounds of interest, utilizing this function may be unnecessary. You have the option to directly modify an existing [CSV file](/IR_spectral_data/comp_sdbs_no.csv) or create a new one the same name.
+If you possess the SDBS numbers for the compounds of interest, utilizing this function may be unnecessary. You have the option to directly modify an existing [CSV file](/IR_spectral_data/comp_sdbs_no.csv) or create a new one with the same name.
 
 Upon executing this class, a message will be displayed in the console indicating that the system is now awaiting mouse clicks. Please follow the mouse click procedure as illustrated in the gif provided below.
 
