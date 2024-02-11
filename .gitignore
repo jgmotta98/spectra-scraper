@@ -2,3 +2,4 @@ node_modules/
 WebPlotDigitizer-4.6-win32-x64/
 .venv/
 package-lock.json
+__pycache__/
