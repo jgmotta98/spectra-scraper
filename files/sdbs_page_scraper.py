@@ -7,7 +7,6 @@ from selenium.webdriver.chrome.options import Options
 import pandas as pd
 import os
 import re
-from PIL import Image, ImageDraw
 from safeloader import Loader
 import subprocess
 
@@ -16,7 +15,7 @@ import subprocess
 
 class SDBSPageScraper:
 
-    def __init__(self):
+    def __init__(self, database_path):
         chrome_options = Options()
         chrome_options.add_argument('--headless')
         chrome_options.add_argument('log-level=2')
@@ -24,10 +23,10 @@ class SDBSPageScraper:
         chrome_options.set_capability("browserVersion", "117") # New versions of chrome for some reason dont remove dev logs.
         chrome_options.add_experimental_option('excludeSwitches', ['enable-logging']) # Removes annoying dev logs.
         self.wd = webdriver.Chrome(options=chrome_options)
-        self.database_path = r'..\IR_spectral_data\comp_sdbs_no.csv'
+        self.database_path = database_path
         self.base_url_img = "https://sdbs.db.aist.go.jp/sdbs/cgi-bin/IMG.cgi?imgdir=ir&amp;fname=NIDA"
         self.base_url = "https://sdbs.db.aist.go.jp/sdbs/cgi-bin/landingpage?sdbsno="
-        self.spectral_path = r'..\IR_spectral_data\img_data'
+        self.spectral_path = '..\\IR_spectral_data\\img_data'
         self.agree_clicked = False
         self.page_scraper_loader = Loader(desc='Downloading images')
 
@@ -91,71 +90,4 @@ class SDBSPageScraper:
         self._set_database_link()
         self.wd.quit()
         self.page_scraper_loader.stop()
-
-class SpectraMod:
-
-    def __init__(self):
-        self.spectra_mod_loader = Loader(desc='Modding images')
-        self.cropped_path = r'..\IR_spectral_data\mod_img_data'
-        self.imgs_path = r'..\IR_spectral_data\img_Data'
-
-    def _main_img_mod(self):
-        img_list = []
-        for img in os.listdir(self.imgs_path):
-            file_path = os.path.join(self.imgs_path, img)
-            if img.endswith('.gif'):
-                self._convert_gif_to_png(file_path)
-                os.remove(file_path)
-                file_path = file_path[:-3] + 'png'
-                img_list.append(file_path)
-            else:
-                img_list.append(file_path)
-            self._modify_spectra(file_path)
-        return img_list
-
-    @staticmethod
-    def _convert_gif_to_png(file_path):
-        img = Image.open(file_path)
-        img.save(file_path[:-3] + 'png')
-
-    def _modify_spectra(self, img_path):
-        with Image.open(img_path).convert("RGBA") as base:
-            shape = [(29, 96), (714, 417)] 
-            area = (23, 90, 715, 424)
-
-            paint_guide = [[(29, 417), (29, 422)], [(24, 417), (29, 417)],
-                        [(24, 96), (29, 96)], [(714, 417), (714, 422)]]
-            
-            erase_square = [[(30, 418), (713, 423)], [(24, 97), (28, 416)]]
-
-            draw = ImageDraw.Draw(base)
-
-            for shape_guide in paint_guide:
-                draw.line(shape_guide, fill="red")
-
-            for erase in erase_square:
-                draw.rectangle(erase, fill="white", outline="white")
-
-            draw.rectangle(shape, outline="red")
-            cropped_img = base.crop(area)
-            cropped_img.save(os.path.join(self.cropped_path, os.path.basename(img_path)))
-
-    def _check_img_existence(self, images_list):
-        for cropped_image_name in os.listdir(self.cropped_path):
-            possible_image_name_path = os.path.join(self.imgs_path, cropped_image_name)
-            true_image_name_path = os.path.join(self.cropped_path, cropped_image_name)
-            if possible_image_name_path not in images_list:
-                os.remove(true_image_name_path)
-
-    def run(self):
-        self.spectra_mod_loader.start()
-        imgs_list = self._main_img_mod()
-        self._check_img_existence(imgs_list)
-        self.spectra_mod_loader.stop()
-
-if __name__ == "__main__":
-    sbds_page_scraper = SDBSPageScraper()
-    sbds_page_scraper.run()
-    spectra_mod = SpectraMod()
-    spectra_mod.run()
-    subprocess.check_call(['npm', 'start'], shell=True)
+    

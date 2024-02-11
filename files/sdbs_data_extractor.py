@@ -6,12 +6,11 @@ import csv
 from pynput import mouse
 
 class SDBSDataExtractor:
-    def __init__(self):
+    def __init__(self, database_path, tesseract_path):
         self.temp_path = '..\\temp_files'
-        self.comp_data_path = '..\\IR_spectral_data\\comp_sdbs_no.csv'
+        self.comp_data_path = database_path
         self.click_positions = []
-        #Change according to your path
-        pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+        pytesseract.pytesseract.tesseract_cmd = tesseract_path
 
     def _on_click(self, x, y, button, pressed):
         if pressed:
@@ -143,8 +142,4 @@ class SDBSDataExtractor:
             do_continue = input('Continue capturing? (y/n): ')
             if do_continue != 'y':
                 break  
-
-if __name__ == "__main__":
-    sdbs = SDBSDataExtractor()
-    sdbs.run()
     

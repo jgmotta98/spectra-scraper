@@ -1,6 +1,6 @@
 # Tutorial
 
-Updates beyond the control of this repository may lead to the tutorial becoming outdated or non-functional.
+Updates beyond the control of this repository may lead to the tutorial becoming outdated or non-functional. After reading the tutorial, run `main.py`.
 
 ## Setup
 
