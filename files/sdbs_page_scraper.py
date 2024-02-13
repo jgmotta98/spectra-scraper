@@ -80,7 +80,7 @@ class SDBSPageScraper:
             else:
                 print(f"NIDA value not found for {name}")
                 return None
-        return is_complete
+        return 'complete'
 
     def _set_database_link(self):
         database_df = pd.read_csv(self.database_path, delimiter=';')
