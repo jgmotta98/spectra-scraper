@@ -7,7 +7,9 @@ from pynput import mouse
 
 class SDBSDataExtractor:
     def __init__(self, database_path, tesseract_path):
-        self.temp_path = '..\\temp_files'
+        current_dir = os.path.dirname(__file__)
+        self.temp_path = os.path.join(current_dir, '..', 'temp_files')
+        self.temp_path = os.path.normpath(self.temp_path)
         self.comp_data_path = database_path
         self.click_positions = []
         pytesseract.pytesseract.tesseract_cmd = tesseract_path
@@ -100,9 +102,10 @@ class SDBSDataExtractor:
 
     def _capture_clicks(self):
         print('Listening for mouse clicks. Complete four clicks to proceed.')
-        with mouse.Listener(_on_click=self._on_click) as listener:
+        with mouse.Listener(on_click=self._on_click) as listener:
             listener.join()
 
+        print(self.click_positions)
 
     def _get_click_regions(self):
         regions = [

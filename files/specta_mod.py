@@ -6,8 +6,11 @@ class SpectraMod:
 
     def __init__(self):
         self.spectra_mod_loader = Loader(desc='Modding images')
-        self.cropped_path = '..\\IR_spectral_data\\mod_img_data'
-        self.imgs_path = '..\\IR_spectral_data\\img_Data'
+        current_dir = os.path.dirname(__file__)
+        self.cropped_path = os.path.join(current_dir, '..', 'IR_spectral_data', 'mod_img_data')
+        self.cropped_path = os.path.normpath(self.cropped_path)
+        self.imgs_path = os.path.join(current_dir, '..', 'IR_spectral_data', 'img_data')
+        self.imgs_path  = os.path.normpath(self.imgs_path)
 
     def _main_img_mod(self):
         img_list = []

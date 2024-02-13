@@ -1,6 +1,7 @@
 // Code slightly modified from the WebPlotDigitizer repository (node_examples/batch_process.js)
 
 const jimp = require("jimp")
+// Change according to your path
 const wpd = require("../WebPlotDigitizer-4.6-win32-x64/WebPlotDigitizer-4.6-win32-x64/resources/app/wpd_node.js").wpd
 const fs = require("fs")
 const path = require("path")

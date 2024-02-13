@@ -8,10 +8,8 @@ import pandas as pd
 import os
 import re
 from safeloader import Loader
-import subprocess
 
 #TODO: implement paralelism.
-#TODO: unify all codes.
 
 class SDBSPageScraper:
 
@@ -24,9 +22,11 @@ class SDBSPageScraper:
         chrome_options.add_experimental_option('excludeSwitches', ['enable-logging']) # Removes annoying dev logs.
         self.wd = webdriver.Chrome(options=chrome_options)
         self.database_path = database_path
+        current_dir = os.path.dirname(__file__)
+        self.spectral_path = os.path.join(current_dir, '..', 'IR_spectral_data', 'img_data')
+        self.spectral_path = os.path.normpath(self.spectral_path)
         self.base_url_img = "https://sdbs.db.aist.go.jp/sdbs/cgi-bin/IMG.cgi?imgdir=ir&amp;fname=NIDA"
         self.base_url = "https://sdbs.db.aist.go.jp/sdbs/cgi-bin/landingpage?sdbsno="
-        self.spectral_path = '..\\IR_spectral_data\\img_data'
         self.agree_clicked = False
         self.page_scraper_loader = Loader(desc='Downloading images')
 
@@ -70,7 +70,8 @@ class SDBSPageScraper:
 
     def _scrape_info(self, row):
         number, name, is_complete = row['number'], row['comp_name'], row['completion']
-        if is_complete == "incomplete":
+        files_from_folder = [file_name[:-4] for file_name in os.listdir(self.spectral_path)]
+        if is_complete == "incomplete" and name not in files_from_folder:
             url = self.base_url + str(number)
             self._navigate_and_agree(url)
             nida_val = self._get_nida(self.wd)
@@ -84,6 +85,7 @@ class SDBSPageScraper:
     def _set_database_link(self):
         database_df = pd.read_csv(self.database_path, delimiter=';')
         database_df['completion'] = database_df.apply(self._scrape_info, axis=1)
+        database_df.to_csv(self.database_path, sep=';', index=False)
 
     def run(self):
         self.page_scraper_loader.start()
