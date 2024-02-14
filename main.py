@@ -1,6 +1,6 @@
-from files.sdbs_data_extractor import SDBSDataExtractor
-from files.sdbs_page_scraper import SDBSPageScraper
-from files.specta_mod import SpectraMod
+from src.sdbs_data_extractor import SDBSDataExtractor
+from src.sdbs_page_scraper import SDBSPageScraper
+from src.specta_mod import SpectraMod
 import subprocess
 import os
 
