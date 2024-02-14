@@ -32,10 +32,6 @@ The numbers and names will be sequentially saved to the existing [CSV file](/IR_
 
 Each iteration of the extracted data will have been securely saved.
 
-## SDBSAutomaticDataExtractor
-
-(In progress)
-
 ## SDBSPageScraper
 
 This class will download the infrared (IR) spectra made in liquid film of the desired compounds.
