@@ -6,7 +6,7 @@ import csv
 from pynput import mouse
 
 class SDBSDataExtractor:
-    def __init__(self, database_path, tesseract_path):
+    def __init__(self, database_path: str, tesseract_path: str) -> None:
         current_dir = os.path.dirname(__file__)
         self.temp_path = os.path.join(current_dir, '..', 'temp_files')
         self.temp_path = os.path.normpath(self.temp_path)
@@ -14,7 +14,7 @@ class SDBSDataExtractor:
         self.click_positions = []
         pytesseract.pytesseract.tesseract_cmd = tesseract_path
 
-    def _on_click(self, x, y, button, pressed):
+    def _on_click(self, x, y, button, pressed) -> bool:
         if pressed:
             self.click_positions.append((x, y))
             labels = [
@@ -30,16 +30,16 @@ class SDBSDataExtractor:
 
             if len(self.click_positions) == 4:
                 return False
-            
+
     @staticmethod
-    def _get_sdbs_no_value(sdbs_img_path):
+    def _get_sdbs_no_value(sdbs_img_path: str) -> list:
         custom_config = r'--oem 3 --psm 11 -c tessedit_char_whitelist=0123456789'
         list_name = pytesseract.image_to_string(sdbs_img_path,
                                                 config=custom_config).strip().split()
         return list_name
     
     @staticmethod
-    def __get_sdbs_name_value(sdbs_img_path):
+    def __get_sdbs_name_value(sdbs_img_path: str) -> list:
         custom_config = r'--oem 3 --psm 3'
         chemical_names = pytesseract.image_to_string(sdbs_img_path,
                                                 config=custom_config)
@@ -48,7 +48,7 @@ class SDBSDataExtractor:
         return list_name
     
     @staticmethod
-    def _img_save(coord, temp_img_path, temp_img_name):
+    def _img_save(coord: list, temp_img_path: str, temp_img_name: str) -> str:
         sdbs_no = pyautogui.screenshot(region=coord)
         sdbs_img_path = os.path.join(temp_img_path, temp_img_name + ".png")
         sdbs_no.save(sdbs_img_path)
@@ -60,18 +60,18 @@ class SDBSDataExtractor:
         enhanced_gray_image.save(sdbs_img_path)
         return sdbs_img_path
 
-    def _get_sbds_no(self, coord_to_save):
+    def _get_sbds_no(self, coord_to_save: list) -> list:
         sdbs_img_path = self._img_save(coord_to_save, self.temp_path, 'temp_img')
         list_name = self._get_sdbs_no_value(sdbs_img_path)
         return list_name
     
-    def _get_sdbs_name(self, coord_to_save):
+    def _get_sdbs_name(self, coord_to_save: list) -> list:
         sdbs_img_path = self._img_save(coord_to_save, self.temp_path, 'temp_img_name')
         list_name = self.__get_sdbs_name_value(sdbs_img_path)
         return list_name
     
     @staticmethod
-    def _read_existing_data(file_path):
+    def _read_existing_data(file_path: str) -> list:
         try:
             with open(file_path, mode='r', newline='', encoding='utf-8') as file:
                 reader = csv.reader(file, delimiter=';')
@@ -82,7 +82,7 @@ class SDBSDataExtractor:
                 pass
             return []
 
-    def _append_to_csv(self, list1, list2):
+    def _append_to_csv(self, list1: list, list2: list) -> None:
         if os.path.exists(self.comp_data_path) and os.path.getsize(self.comp_data_path) <= 2:
             open(self.comp_data_path, 'w').close()
 
@@ -100,14 +100,14 @@ class SDBSDataExtractor:
                 if not (row in existing_data or row_temp in existing_data):
                     writer.writerow(row)
 
-    def _capture_clicks(self):
+    def _capture_clicks(self) -> None:
         print('Listening for mouse clicks. Complete four clicks to proceed.')
         with mouse.Listener(on_click=self._on_click) as listener:
             listener.join()
 
         print(self.click_positions)
 
-    def _get_click_regions(self):
+    def _get_click_regions(self) -> list:
         regions = [
             (self.click_positions[0][0], self.click_positions[0][1], 
              self.click_positions[1][0] - self.click_positions[0][0], 
@@ -118,13 +118,13 @@ class SDBSDataExtractor:
         ]
         return regions
     
-    def _process_clicks(self):
+    def _process_clicks(self) -> tuple:
         regions = self._get_click_regions()
         name_list = self._get_sbds_no(regions[0])
         name_comp_list = self._get_sdbs_name(regions[1])
         return name_list, name_comp_list
 
-    def run(self):
+    def run(self) -> None:
         while True:
             self.click_positions.clear()
             while True:

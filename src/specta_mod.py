@@ -4,7 +4,7 @@ import os
 
 class SpectraMod:
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.spectra_mod_loader = Loader(desc='Modding images')
         current_dir = os.path.dirname(__file__)
         self.cropped_path = os.path.join(current_dir, '..', 'IR_spectral_data', 'mod_img_data')
@@ -12,7 +12,7 @@ class SpectraMod:
         self.imgs_path = os.path.join(current_dir, '..', 'IR_spectral_data', 'img_data')
         self.imgs_path  = os.path.normpath(self.imgs_path)
 
-    def _main_img_mod(self):
+    def _main_img_mod(self) -> list:
         img_list = []
         for img in os.listdir(self.imgs_path):
             file_path = os.path.join(self.imgs_path, img)
@@ -27,11 +27,11 @@ class SpectraMod:
         return img_list
 
     @staticmethod
-    def _convert_gif_to_png(file_path):
+    def _convert_gif_to_png(file_path: str) -> None:
         img = Image.open(file_path)
         img.save(file_path[:-3] + 'png')
 
-    def _modify_spectra(self, img_path):
+    def _modify_spectra(self, img_path: str) -> None:
         with Image.open(img_path).convert("RGBA") as base:
             shape = [(29, 96), (714, 417)] 
             area = (23, 90, 715, 424)
@@ -53,14 +53,14 @@ class SpectraMod:
             cropped_img = base.crop(area)
             cropped_img.save(os.path.join(self.cropped_path, os.path.basename(img_path)))
 
-    def _check_img_existence(self, images_list):
+    def _check_img_existence(self, images_list: list) -> None:
         for cropped_image_name in os.listdir(self.cropped_path):
             possible_image_name_path = os.path.join(self.imgs_path, cropped_image_name)
             true_image_name_path = os.path.join(self.cropped_path, cropped_image_name)
             if possible_image_name_path not in images_list:
                 os.remove(true_image_name_path)
 
-    def run(self):
+    def run(self) -> None:
         self.spectra_mod_loader.start()
         imgs_list = self._main_img_mod()
         self._check_img_existence(imgs_list)
