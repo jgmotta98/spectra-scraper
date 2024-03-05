@@ -4,7 +4,7 @@ Easy to use scraper to batch download infrared spectra from the free website Spe
 
 ## How to use
 
-You can access the tutorial [here](./files/README.md) and follow the step by step guide.
+You can access the tutorial [here](./src/README.md) and follow the step by step guide.
 
 ## Credits
 
