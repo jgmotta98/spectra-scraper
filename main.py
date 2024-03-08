@@ -9,14 +9,14 @@ DATABASE_PATH = '.\\IR_spectral_data\\comp_sdbs_no.csv'
 TESSERACT_PATH = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
 def main() -> None:
-    is_manual = input('Use the manual extraction? (y/n): ')
+    '''is_manual = input('Use the manual extraction? (y/n): ')
     if is_manual == 'y':
         SDBSDataExtractor(DATABASE_PATH, TESSERACT_PATH).run()
     else:
         pass
     SDBSPageScraper(DATABASE_PATH).run()
-    SpectraMod().run()
-    os.chdir('.\\files')
+    SpectraMod().run()'''
+    os.chdir('.\\src')
     subprocess.check_call(['npm', 'start'], shell=True)
 
 if __name__ == "__main__":
