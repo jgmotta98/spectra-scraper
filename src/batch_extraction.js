@@ -12,7 +12,6 @@ const sqlite3 = require('sqlite3').verbose();
 // Set defaults if parameters are not passed but default to using parameters
 // for batch scripting using this process
 const imagesPath = getArgvValue(process.argv, "--image-path=") || "../IR_spectral_data/mod_img_data";
-const outputImagePath = getArgvValue(process.argv, "--output-path=") || "../IR_spectral_data/csv_data";
 const outputJSONPath = getArgvValue(process.argv, "--output-json-path=") || "../IR_spectral_data/json_data";
 const referenceProjectJSON = getArgvValue(process.argv, "--json-reference-file=") || "../IR_spectral_data/reference_project.json";
 const dbPath = getArgvValue(process.argv,  "--database-path=") || "../IR_spectral_data/spectral_database.db";
@@ -34,8 +33,6 @@ function createDatabase(dbPath) {
     return new sqlite3.Database(dbPath, (err) => {
         if (err) {
         console.error('Error opening database:', err.message);
-        } else {
-        console.log('Connected to the database');
         }
     });
   }
@@ -47,8 +44,6 @@ function createTable(db, tableName) {
     db.run(createTableQuery, (err) => {
       if (err) {
         console.error(`Error creating table ${tableName}:`, err.message);
-      } else {
-        console.log(`Table ${tableName} created or already exists`);
       }
     });
   }
@@ -59,8 +54,6 @@ function insertData(db, tableName, data) {
     db.run(insertDataQuery, [data[0], data[1]], (err) => {
       if (err) {
         console.error(`Error inserting data into ${tableName}:`, err.message);
-      } else {
-        console.log(`Data inserted into ${tableName}`);
       }
     });
   }
@@ -87,17 +80,12 @@ function digitizeImage(file, img, db) {
         autoDetector.generateBinaryData(img.bitmap);
         autoDetector.algorithm.run(autoDetector, ds, axes);
         
-        // export CSV
-        let csv = "x;y\n";
+        // Saving inside the database
         for(let ptIdx = 0; ptIdx < ds.getCount(); ptIdx++) {
             let pt = ds.getPixel(ptIdx);
             let data = axes.pixelToData(pt.x, pt.y);
             insertData(db, path.basename(file, fileExtension), data)
-            csv += data[0] + ";" + data[1] + "\n";
         }
-
-        csvfilename = path.join(outputImagePath, path.basename(file, fileExtension) + ".csv");
-        fs.writeFileSync(csvfilename, csv);
     }
 
     // export JSON specific to this image for later use
@@ -115,8 +103,8 @@ function doAllImages() {
         
         // loop over all files
         files.forEach(function (file) {
-            createTable(db, path.basename(file, fileExtension))
             if (path.extname(file) == fileExtension) {
+                createTable(db, path.basename(file, fileExtension))
                 // read image
                 jimp.read(path.join(imagesPath, file)).then(img => {digitizeImage(file, img, db)});
             }
