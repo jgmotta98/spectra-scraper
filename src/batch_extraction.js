@@ -46,20 +46,23 @@ function createTable(db, tableName) {
         console.error(`Error creating table ${tableName}:`, err.message);
       }
     });
-  }
+}
 
-// Function to insert data into the table
-function insertData(db, tableName, data) {
-    const insertDataQuery = `INSERT INTO ${tableName} (x, y) VALUES (?, ?)`;
-    db.run(insertDataQuery, [data[0], data[1]], (err) => {
-      if (err) {
-        console.error(`Error inserting data into ${tableName}:`, err.message);
-      }
+// Insert all data inside the database
+function insertDataBatch(db, tableName, dataBatch, callback) {
+    const insertDataQuery = `INSERT INTO ${tableName} (x, y) VALUES ${Array(dataBatch.length).fill('(?, ?)').join(', ')}`;
+    const flattenedData = dataBatch.reduce((acc, data) => acc.concat(data), []);
+
+    db.run(insertDataQuery, flattenedData, (err) => {
+        if (err) {
+            console.error(`Error inserting data into ${tableName}:`, err.message);
+        }
     });
-  }
+}
 
 function digitizeImage(file, img, db) {
     //console.log("Reading: " + file);
+    let dataBatch = [];
 
     // load base project
     let plotData = new wpd.PlotData();
@@ -84,9 +87,11 @@ function digitizeImage(file, img, db) {
         for(let ptIdx = 0; ptIdx < ds.getCount(); ptIdx++) {
             let pt = ds.getPixel(ptIdx);
             let data = axes.pixelToData(pt.x, pt.y);
-            insertData(db, path.basename(file, fileExtension), data)
+            dataBatch.push(data);
         }
     }
+
+    insertDataBatch(db, path.basename(file, fileExtension), dataBatch)
 
     // export JSON specific to this image for later use
     let newSerializedPlotData = JSON.stringify(plotData.serialize());
@@ -114,4 +119,4 @@ function doAllImages() {
 
 // read base project, then digitize all images in imagesPath
 doAllImages();
-console.log("Extraction done!")
+console.log("All files were added to the database!")
