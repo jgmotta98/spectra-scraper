@@ -6,6 +6,8 @@ Easy to use scraper to batch download infrared spectra from the free website Spe
 
 You can access the tutorial [here](./src/README.md) and follow the step by step guide.
 
+The purpose of the spectra scraper is to return a complete database file at the end to be use for any spectral related training.
+
 ## Credits
 
 - Numerical data extraction made with standard [WebPlotDigitizer](https://github.com/ankitrohatgi/WebPlotDigitizer/tree/master).
