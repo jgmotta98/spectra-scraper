@@ -4,6 +4,7 @@ import pyautogui
 import os
 import csv
 from pynput import mouse
+import re
 
 class SDBSDataExtractor:
     def __init__(self, database_path: str, tesseract_path: str) -> None:
@@ -68,6 +69,7 @@ class SDBSDataExtractor:
     def _get_sdbs_name(self, coord_to_save: list) -> list:
         sdbs_img_path = self._img_save(coord_to_save, self.temp_path, 'temp_img_name')
         list_name = self.__get_sdbs_name_value(sdbs_img_path)
+        list_name = ['_' + re.sub(r'[-.,]', '_', name) for name in list_name]
         return list_name
     
     @staticmethod

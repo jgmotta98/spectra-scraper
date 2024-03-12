@@ -11,7 +11,8 @@
   "license": "MIT",
   "dependencies": {
     "fs": "^0.0.1-security",
-    "jimp": "^0.22.10",
-    "path": "^0.12.7"
+    "jimp": "^0.22.12",
+    "path": "^0.12.7",
+    "sqlite3": "^5.1.7"
   }
 }

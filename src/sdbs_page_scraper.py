@@ -72,7 +72,7 @@ class SDBSPageScraper:
                 print(f"Could not find or click agree button: {e}")
 
     def _scrape_info(self, row) -> str | None:
-        number, name, is_complete = row['number'], row['comp_name'], row['completion']
+        number, name, is_complete = row['number'], '_' + re.sub(r'[-.,]', '_', row['comp_name']), row['completion']
         files_from_folder = [file_name[:-4] for file_name in os.listdir(self.spectral_path)]
         if is_complete == "incomplete" and name not in files_from_folder:
             url = self.base_url + str(number)
