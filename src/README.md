@@ -44,6 +44,6 @@ Following the download, the images will be formatted for compatibility with WebP
 
 ## batch_extraction.js
 
-The [reference project](..\IR_spectral_data\reference_project.json) enables batch extraction and can be tailored through the WebPlotDigitizer application. Adjustments can be made by saving a new `.json` file.
+The [reference project](/IR_spectral_data/reference_project.json) enables batch extraction and can be tailored through the WebPlotDigitizer application. Adjustments can be made by saving a new `.json` file.
 
-All data gathered during the process will be accessible in the [IR_spectral_data](..\IR_spectral_data) folder.
+All data gathered during the process will be accessible in the [IR_spectral_data](/IR_spectral_data) folder.
