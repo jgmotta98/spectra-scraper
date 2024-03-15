@@ -38,6 +38,8 @@ This class will download the infrared (IR) spectra made in liquid film of the de
 
 Make sure that the compound has a valid IR spectra; in the absence of such data, no image will be downloaded.
 
+You will have the choice to increase the number of chrome instances to download more images in a faster pace.
+
 ## SpectraMod
 
 Following the download, the images will be formatted for compatibility with WebPlotDigitizer's code.
