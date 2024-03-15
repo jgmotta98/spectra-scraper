@@ -12,8 +12,6 @@ from safeloader import Loader
 from concurrent.futures import ThreadPoolExecutor
 from typing import List, Callable, Union
 
-#TODO: implement paralelism.
-
 class SDBSPageScraper:
 
     def __init__(self, database_path: str, chrome_instances: int) -> None:
