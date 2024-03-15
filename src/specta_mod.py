@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw
 from safeloader import Loader
 import os
+from typing import List
 
 class SpectraMod:
 
@@ -12,7 +13,7 @@ class SpectraMod:
         self.imgs_path = os.path.join(current_dir, '..', 'IR_spectral_data', 'img_data')
         self.imgs_path  = os.path.normpath(self.imgs_path)
 
-    def _main_img_mod(self) -> list:
+    def _main_img_mod(self) -> List[str]:
         img_list = []
         for img in os.listdir(self.imgs_path):
             file_path = os.path.join(self.imgs_path, img)
@@ -53,7 +54,7 @@ class SpectraMod:
             cropped_img = base.crop(area)
             cropped_img.save(os.path.join(self.cropped_path, os.path.basename(img_path)))
 
-    def _check_img_existence(self, images_list: list) -> None:
+    def _check_img_existence(self, images_list: List[str]) -> None:
         for cropped_image_name in os.listdir(self.cropped_path):
             possible_image_name_path = os.path.join(self.imgs_path, cropped_image_name)
             true_image_name_path = os.path.join(self.cropped_path, cropped_image_name)
