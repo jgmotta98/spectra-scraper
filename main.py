@@ -12,7 +12,7 @@ CONCURRENT_BROWSERS = 5
 
 # Configuring basic logging
 logging.basicConfig(
-    format='%(asctime)s - %(levelname)s - %(message)s',
+    format='\033[92m%(asctime)s - %(levelname)s - %(message)s\033[0m',
     level=logging.INFO
 )
 
@@ -24,10 +24,11 @@ def main() -> None:
     logging.info("Scraping complete!")
     
     SpectraMod().run()
+    logging.info("Image mod complete!")
     
     os.chdir('.\\src')
     subprocess.check_call(['npm', 'start'], shell=True)
     logging.info("All files were added to the database!")
-    
+
 if __name__ == "__main__":
     main()
