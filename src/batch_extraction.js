@@ -119,4 +119,3 @@ function doAllImages() {
 
 // read base project, then digitize all images in imagesPath
 doAllImages();
-console.log("All files were added to the database!")

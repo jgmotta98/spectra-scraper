@@ -87,7 +87,7 @@ class SDBSPageScraper:
         dataframe = dataframe.apply(scrape_function, args=(wd,) , axis=1)
         wd.quit()
 
-    def _set_database_link(self, database_list: List[pd.DataFrame]) -> None:
+    def _database_search(self, database_list: List[pd.DataFrame]) -> None:
 
         with ThreadPoolExecutor(max_workers=self.chrome_instances) as executor:
             # Submit tasks for each URL
@@ -115,6 +115,6 @@ class SDBSPageScraper:
     def run(self) -> None:
         self.page_scraper_loader.start()
         df_parts = self._open_and_divide_instances()
-        self._set_database_link(df_parts)
+        self._database_search(df_parts)
         self.page_scraper_loader.stop()
     

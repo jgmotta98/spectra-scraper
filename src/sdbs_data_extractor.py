@@ -74,7 +74,7 @@ class SDBSDataExtractor:
         return list_name
     
     @staticmethod
-    def _read_existing_data(file_path: str) -> List[Tuple[str], None]:
+    def _read_existing_data(file_path: str) -> List[Tuple[str]]:
         try:
             with open(file_path, mode='r', newline='', encoding='utf-8') as file:
                 reader = csv.reader(file, delimiter=';')
