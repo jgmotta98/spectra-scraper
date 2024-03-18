@@ -63,14 +63,14 @@ class SDBSPageScraper:
                 print(f"Could not find or click agree button: {e}")
 
     def _scrape_info(self, row: pd.Series, wd: ChromeWebDriver) -> None:
-        number, name = row['number'], '_' + re.sub(r'[-.,]', '_', row['comp_name'])
+        number, name = row['number'], row['comp_name']
         files_from_folder = [file_name[:-4] for file_name in os.listdir(self.spectral_path)]
         if name not in files_from_folder:
             url = self.base_url + str(number)
             self._navigate_and_agree(url, wd)
             nida_val = self._get_nida(wd)
             if nida_val:
-                self._capture_screenshot(name, nida_val, wd)
+                self._capture_screenshot(f'[{number}]{name}', nida_val, wd)
             else:
                 print(f"NIDA value not found for {name}")
 

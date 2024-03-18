@@ -41,7 +41,7 @@ class SDBSDataExtractor:
         return list_name
     
     @staticmethod
-    def __get_sdbs_name_value(sdbs_img_path: str) -> List[str]:
+    def _get_sdbs_name_value(sdbs_img_path: str) -> List[str]:
         custom_config = r'--oem 3 --psm 3'
         chemical_names = pytesseract.image_to_string(sdbs_img_path,
                                                 config=custom_config)
@@ -66,11 +66,11 @@ class SDBSDataExtractor:
         sdbs_img_path = self._img_save(coord_to_save, self.temp_path, 'temp_img')
         list_name = self._get_sdbs_no_value(sdbs_img_path)
         return list_name
-    
+
     def _get_sdbs_name(self, coord_to_save:  List[float]) -> List[str]:
         sdbs_img_path = self._img_save(coord_to_save, self.temp_path, 'temp_img_name')
-        list_name = self.__get_sdbs_name_value(sdbs_img_path)
-        list_name = ['_' + re.sub(r'[-.,]', '_', name) for name in list_name]
+        list_name = self._get_sdbs_name_value(sdbs_img_path)
+        list_name = [name for name in list_name]
         return list_name
     
     @staticmethod
@@ -94,12 +94,12 @@ class SDBSDataExtractor:
             writer = csv.writer(file, delimiter=';')
             
             if not existing_data:
-                column_names = ['number', 'comp_name', 'completion']
+                column_names = ['number', 'comp_name']
                 writer.writerow(column_names)
             
             for item1, item2 in zip(list1, list2):
-                row = (item1, item2, "incomplete")
-                row_temp = (item1, item2, "complete")
+                row = (item1, item2)
+                row_temp = (item1, item2)
                 if not (row in existing_data or row_temp in existing_data):
                     writer.writerow(row)
 

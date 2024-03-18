@@ -17,8 +17,8 @@ logging.basicConfig(
 )
 
 def main() -> None:
-    SDBSDataExtractor(DATABASE_PATH, TESSERACT_PATH).run()
-    logging.info('Extraction complete!')
+    '''SDBSDataExtractor(DATABASE_PATH, TESSERACT_PATH).run()
+    logging.info('Extraction complete!')'''
     
     SDBSPageScraper(DATABASE_PATH, CONCURRENT_BROWSERS).run()
     logging.info("Scraping complete!")
