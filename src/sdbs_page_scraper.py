@@ -90,43 +90,44 @@ class SDBSPageScraper:
     def _database_search(self, database_list: List[pd.DataFrame]) -> None:
 
         with ThreadPoolExecutor(max_workers=self.chrome_instances) as executor:
-            # Submit tasks for each URL
             futures = [executor.submit(self._open_browser, self._scrape_info, df) for df in database_list[:self.chrome_instances]]
 
-            # Wait for all tasks to complete
             for future in futures:
                 future.result()
 
-    def _check_for_saved_files(self, row):
+    def _check_for_saved_files(self, row: pd.Series) -> pd.Series:
+
         if f'[{row['number']}]{row['comp_name']}.png' in os.listdir(self.spectral_path):
-            return None
-        else:
-            return row
+            row['number'], row['comp_name'] = None, None
+        return row
 
     def _open_and_divide_instances(self) -> List[pd.DataFrame]:
         database_df = pd.read_csv(self.database_path, delimiter=';')
 
-        # TODO: Deal when there is only one row (df becomes a Series)
         database_df = database_df.apply(self._check_for_saved_files, axis=1)
         database_df = database_df.dropna()
         database_df.reset_index(drop=True, inplace=True)
-        if not database_df.empty and not isinstance(database_df, pd.Series):
+        if not database_df.empty:
             database_df['number'] = database_df['number'].astype(int)
 
-        # TODO: Adjust the chrome_instaces based on the parts lenght. Separate the rows better between the parts. 
         num_rows = len(database_df)
-        if num_rows == 0:
-            return []
-
+        if num_rows < self.chrome_instances:
+            self.chrome_instances = num_rows
+        
+        if not self.chrome_instances:
+            # Catch an exception with zero images to download!
+            pass
+        
         num_rows_per_part = num_rows // self.chrome_instances
-
-        num_rows_per_part = max(num_rows_per_part, 1)
 
         parts = [database_df.iloc[i*num_rows_per_part:(i+1)*num_rows_per_part] for i in range(self.chrome_instances)]
 
         remainder = num_rows % self.chrome_instances
+
         if remainder > 0:
-            parts[-1] = pd.concat([parts[-1], database_df.iloc[-remainder:]])
+            remainder_rows = database_df.iloc[-remainder:]
+            for i in range(remainder):
+                parts[i] = pd.concat([parts[i], remainder_rows.iloc[[i]]])
 
         return parts
     
