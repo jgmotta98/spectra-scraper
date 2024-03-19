@@ -97,16 +97,34 @@ class SDBSPageScraper:
             for future in futures:
                 future.result()
 
+    def _check_for_saved_files(self, row):
+        if f'[{row['number']}]{row['comp_name']}.png' in os.listdir(self.spectral_path):
+            return None
+        else:
+            return row
+
     def _open_and_divide_instances(self) -> List[pd.DataFrame]:
         database_df = pd.read_csv(self.database_path, delimiter=';')
-        # Calculate the number of rows in each part
-        num_rows_per_part = len(database_df) // self.chrome_instances
 
-        # Split the DataFrame into equal parts
+        # TODO: Deal when there is only one row (df becomes a Series)
+        database_df = database_df.apply(self._check_for_saved_files, axis=1)
+        database_df = database_df.dropna()
+        database_df.reset_index(drop=True, inplace=True)
+        if not database_df.empty and not isinstance(database_df, pd.Series):
+            database_df['number'] = database_df['number'].astype(int)
+
+        # TODO: Adjust the chrome_instaces based on the parts lenght. Separate the rows better between the parts. 
+        num_rows = len(database_df)
+        if num_rows == 0:
+            return []
+
+        num_rows_per_part = num_rows // self.chrome_instances
+
+        num_rows_per_part = max(num_rows_per_part, 1)
+
         parts = [database_df.iloc[i*num_rows_per_part:(i+1)*num_rows_per_part] for i in range(self.chrome_instances)]
 
-        # If there are any remaining rows, add them to the last part
-        remainder = len(database_df) % self.chrome_instances
+        remainder = num_rows % self.chrome_instances
         if remainder > 0:
             parts[-1] = pd.concat([parts[-1], database_df.iloc[-remainder:]])
 
