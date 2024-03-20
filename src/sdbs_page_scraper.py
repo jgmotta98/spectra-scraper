@@ -1,21 +1,25 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.webdriver import WebDriver as ChromeWebDriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.chrome.options import Options
-import pandas as pd
+import logging
 import os
 import re
-from safeloader import Loader
-from concurrent.futures import ThreadPoolExecutor
 from typing import List, Callable, Union
+
+import pandas as pd
+from concurrent.futures import ThreadPoolExecutor
+from safeloader import Loader
+from src.scrape_logger import Logger
+
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.webdriver import WebDriver as ChromeWebDriver
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 class SDBSPageScraper:
 
-    def __init__(self, database_path: str, chrome_instances: int):
-
+    def __init__(self, database_path: str, chrome_instances: int, logger_config: Logger):
+        self.logger_config = logger_config
         self.database_path = database_path
         current_dir = os.path.dirname(__file__)
         self.spectral_path = os.path.join(current_dir, '..', 'IR_spectral_data', 'img_data')

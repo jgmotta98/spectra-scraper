@@ -1,11 +1,15 @@
-from PIL import Image, ImageDraw
-from safeloader import Loader
+import logging
 import os
 from typing import List
 
+from PIL import Image, ImageDraw
+from safeloader import Loader
+from src.scrape_logger import Logger
+
 class SpectraMod:
 
-    def __init__(self):
+    def __init__(self, logger_config: Logger):
+        self.logger_config = logger_config
         self.spectra_mod_loader = Loader(desc='Modding images')
         current_dir = os.path.dirname(__file__)
         self.cropped_path = os.path.join(current_dir, '..', 'IR_spectral_data', 'mod_img_data')

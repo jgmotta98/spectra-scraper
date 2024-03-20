@@ -1,19 +1,23 @@
-import pytesseract
-from PIL import Image, ImageEnhance
-import pyautogui
-import os
 import csv
-from pynput import mouse
+import logging
+import os
 import re
 from typing import List, Tuple
 
+from PIL import Image, ImageEnhance
+from pynput import mouse
+import pyautogui
+import pytesseract
+from src.scrape_logger import Logger
+
 class SDBSDataExtractor:
-    def __init__(self, database_path: str, tesseract_path: str):
+    def __init__(self, database_path: str, tesseract_path: str, logger_config: Logger):
+        self.logger_config = logger_config
         current_dir = os.path.dirname(__file__)
         self.temp_path = os.path.join(current_dir, '..', 'temp_files')
         self.temp_path = os.path.normpath(self.temp_path)
         self.comp_data_path = database_path
-        self.click_positions = []
+        self.click_positions: List[Tuple] = []
         pytesseract.pytesseract.tesseract_cmd = tesseract_path
 
     def _on_click(self, x: int, y: int, button: str, pressed: bool) -> bool:
