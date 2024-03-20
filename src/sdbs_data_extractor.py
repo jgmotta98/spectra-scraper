@@ -8,7 +8,7 @@ import re
 from typing import List, Tuple
 
 class SDBSDataExtractor:
-    def __init__(self, database_path: str, tesseract_path: str) -> None:
+    def __init__(self, database_path: str, tesseract_path: str):
         current_dir = os.path.dirname(__file__)
         self.temp_path = os.path.join(current_dir, '..', 'temp_files')
         self.temp_path = os.path.normpath(self.temp_path)

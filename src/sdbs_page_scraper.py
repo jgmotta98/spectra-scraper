@@ -14,7 +14,7 @@ from typing import List, Callable, Union
 
 class SDBSPageScraper:
 
-    def __init__(self, database_path: str, chrome_instances: int) -> None:
+    def __init__(self, database_path: str, chrome_instances: int):
 
         self.database_path = database_path
         current_dir = os.path.dirname(__file__)

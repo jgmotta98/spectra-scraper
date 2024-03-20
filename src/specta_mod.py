@@ -5,7 +5,7 @@ from typing import List
 
 class SpectraMod:
 
-    def __init__(self) -> None:
+    def __init__(self):
         self.spectra_mod_loader = Loader(desc='Modding images')
         current_dir = os.path.dirname(__file__)
         self.cropped_path = os.path.join(current_dir, '..', 'IR_spectral_data', 'mod_img_data')
