@@ -119,9 +119,10 @@ class SDBSPageScraper:
             self.chrome_instances = num_rows
         
         if not self.chrome_instances:
-            # Catch an exception with zero images to download!
-            pass
-        
+            self.page_scraper_loader.fail_artificially()
+            self.logger_config.log("All images have been downloaded already!", logging.ERROR)
+            quit()
+
         num_rows_per_part = num_rows // self.chrome_instances
 
         parts = [database_df.iloc[i*num_rows_per_part:(i+1)*num_rows_per_part] for i in range(self.chrome_instances)]
