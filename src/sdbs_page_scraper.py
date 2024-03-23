@@ -40,7 +40,7 @@ class SDBSPageScraper:
                     return nida_number
             return None
         except Exception as e:
-            print(f"Error in get_nida: {e}")
+            self.logger_config.log(f"Error in get_nida: {e}", logging.ERROR)
             return None
         
     def _capture_screenshot(self, name: str, nida_val: str, wd: ChromeWebDriver) -> None:
@@ -53,7 +53,7 @@ class SDBSPageScraper:
             WebDriverWait(wd, 10).until(lambda d: image_element.get_attribute('complete'))
             image_element.screenshot(file_path)
         except Exception as e:
-            print(f"Error capturing screenshot for {name}: {e}")
+            self.logger_config.log(f"Error capturing screenshot for {name}: {e}", logging.ERROR)
         
     def _navigate_and_agree(self, url: str, wd: ChromeWebDriver) -> None:
         wd.get(url)
@@ -64,7 +64,7 @@ class SDBSPageScraper:
                 self.agree_clicked = True
                 wd.get(url)
             except Exception as e:
-                print(f"Could not find or click agree button: {e}")
+                self.logger_config.log(f"Could not find or click agree button: {e}", logging.ERROR)
 
     def _scrape_info(self, row: pd.Series, wd: ChromeWebDriver) -> None:
         number, name = row['number'], row['comp_name']
