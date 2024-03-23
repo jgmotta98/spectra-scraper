@@ -70,3 +70,4 @@ class SpectraMod:
         imgs_list = self._main_img_mod()
         self._check_img_existence(imgs_list)
         self.spectra_mod_loader.stop()
+        

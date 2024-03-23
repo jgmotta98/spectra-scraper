@@ -38,3 +38,4 @@ class Logger:
         log_method = getattr(self.logger, logging.getLevelName(level).lower())
         color_code = self.log_colors.get(level, '')
         log_method(message, extra={'color_code': color_code})
+        

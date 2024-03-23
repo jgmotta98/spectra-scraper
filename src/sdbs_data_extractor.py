@@ -112,8 +112,6 @@ class SDBSDataExtractor:
         with mouse.Listener(on_click=self._on_click) as listener:
             listener.join()
 
-        print(self.click_positions)
-
     def _get_click_regions(self) -> List[Tuple]:
         regions = [
             (self.click_positions[0][0], self.click_positions[0][1], 
@@ -131,25 +129,29 @@ class SDBSDataExtractor:
         name_comp_list = self._get_sdbs_name(regions[1])
         return name_list, name_comp_list
 
+    def _capture_and_process_clicks(self) -> None:
+        while True:
+            self._capture_clicks()
+            self.name_list, self.name_comp_list = self._process_clicks()
+
+            self.logger_config.log("Clicks registered!", logging.INFO)
+            if input('Retry the clicks? (y/n): ') != 'y':
+                break
+            else:
+                self.click_positions.clear()
+
     def run(self) -> None:
         while True:
             self.click_positions.clear()
-            while True:
-                try:
-                    self._capture_clicks()
-                    name_list, name_comp_list = self._process_clicks()
-
-                    do_retry = input('Retry the clicks? (y/n): ')
-                    if do_retry != 'y':
-                        break
-                    else:
-                        self.click_positions.clear()
-                except Exception as e:
-                    print('An error occurred. Retrying the clicks...')
-                    self.click_positions.clear()
+            try:
+                self._capture_and_process_clicks()
+            except Exception as e:
+                self.logger_config.log(f'An error occurred: {e}. Retrying the clicks...',
+                                        logging.WARNING)
+                self.click_positions.clear()
+                continue
             
-            self._append_to_csv(name_list, name_comp_list)
-            do_continue = input('Continue capturing? (y/n): ')
-            if do_continue != 'y':
-                break  
+            self._append_to_csv(self.name_list, self.name_comp_list)
+            if input('Continue capturing? (y/n): ') != 'y':
+                break 
     
