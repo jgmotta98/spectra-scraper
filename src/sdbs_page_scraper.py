@@ -15,6 +15,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.remote.webelement import WebElement
+from selenium.common.exceptions import TimeoutException
 
 class SDBSPageScraper:
 
@@ -30,19 +32,26 @@ class SDBSPageScraper:
         self.chrome_instances = chrome_instances
         self.page_scraper_loader = Loader(desc='Downloading images')
 
-    def _get_nida(self, wd: ChromeWebDriver) -> Union[str, None]:
+    def _fetch_nida_number(self, ir_elements: List[WebElement]) -> str:
+        for element in ir_elements:
+            match = re.search(r'NIDA-(\d+)', element.text)
+            if match:
+                nida_number = re.sub(r'^0+', '', str(match.group(1)))
+            return nida_number
+
+    def _get_nida(self, wd: ChromeWebDriver) -> str:
         try:
             ir_elements = WebDriverWait(wd, 10).until(EC.presence_of_all_elements_located((By.XPATH, "//a[contains(text(), 'IR')]")))
-            for element in ir_elements:
-                match = re.search(r'NIDA-(\d+)', element.text)
-                if match:
-                    nida_number = re.sub(r'^0+', '', str(match.group(1)))
-                    return nida_number
-            return None
+            nida_number = self._fetch_nida_number(ir_elements)
+            return nida_number
+        except TimeoutException:
+            self.logger_config.log("Timeout while waiting for NIDA value!",
+                                    logging.ERROR)
         except Exception as e:
-            self.logger_config.log(f"Error in get_nida: {e}", logging.ERROR)
-            return None
-        
+            self.logger_config.log(f"Error in getting NIDA value!", 
+                                   logging.ERROR)
+        return 0
+    
     def _capture_screenshot(self, name: str, nida_val: str, wd: ChromeWebDriver) -> None:
         url_img = self.base_url_img + str(nida_val)
         wd.get(url_img)
@@ -52,8 +61,11 @@ class SDBSPageScraper:
             ActionChains(wd).move_to_element(image_element).perform()
             WebDriverWait(wd, 10).until(lambda d: image_element.get_attribute('complete'))
             image_element.screenshot(file_path)
+        except TimeoutException:
+            self.logger_config.log("Timeout while waiting for screenshot!",
+                                    logging.ERROR)
         except Exception as e:
-            self.logger_config.log(f"Error capturing screenshot for {name}: {e}", logging.ERROR)
+            self.logger_config.log(f"Error capturing image of {name}: {e}", logging.ERROR)
         
     def _navigate_and_agree(self, url: str, wd: ChromeWebDriver) -> None:
         wd.get(url)
@@ -63,8 +75,12 @@ class SDBSPageScraper:
                 agree_button.click()
                 self.agree_clicked = True
                 wd.get(url)
+            except TimeoutException:
+                self.logger_config.log("Timeout while waiting to click agreed!",
+                                        logging.ERROR)
             except Exception as e:
-                self.logger_config.log(f"Could not find or click agree button: {e}", logging.ERROR)
+                self.logger_config.log(f"Could not find or click agree button: {e}", 
+                                       logging.ERROR)
 
     def _scrape_info(self, row: pd.Series, wd: ChromeWebDriver) -> None:
         number, name = row['number'], row['comp_name']
@@ -76,7 +92,8 @@ class SDBSPageScraper:
             if nida_val:
                 self._capture_screenshot(f'[{number}]{name}', nida_val, wd)
             else:
-                print(f"NIDA value not found for {name}")
+                self.logger_config.log(f"NIDA value not found for {name}", 
+                                       logging.ERROR)
 
     @staticmethod
     def _open_browser(scrape_function: Callable[[pd.Series, ChromeWebDriver], None], dataframe: pd.DataFrame) -> None:
@@ -92,7 +109,6 @@ class SDBSPageScraper:
         wd.quit()
 
     def _database_search(self, database_list: List[pd.DataFrame]) -> None:
-
         with ThreadPoolExecutor(max_workers=self.chrome_instances) as executor:
             futures = [executor.submit(self._open_browser, self._scrape_info, df) for df in database_list[:self.chrome_instances]]
 
@@ -100,19 +116,22 @@ class SDBSPageScraper:
                 future.result()
 
     def _check_for_saved_files(self, row: pd.Series) -> pd.Series:
-
         if f'[{row['number']}]{row['comp_name']}.png' in os.listdir(self.spectral_path):
             row['number'], row['comp_name'] = None, None
         return row
 
-    def _open_and_divide_instances(self) -> List[pd.DataFrame]:
-        database_df = pd.read_csv(self.database_path, delimiter=';')
-
+    def _database_filtering(self, database_df: pd.DataFrame) -> pd.DataFrame:
         database_df = database_df.apply(self._check_for_saved_files, axis=1)
         database_df = database_df.dropna()
         database_df.reset_index(drop=True, inplace=True)
         if not database_df.empty:
             database_df['number'] = database_df['number'].astype(int)
+        return database_df
+
+    def _open_and_divide_instances(self) -> List[pd.DataFrame]:
+        database_df = pd.read_csv(self.database_path, delimiter=';')
+
+        database_df = self._database_filtering(database_df)
 
         num_rows = len(database_df)
         if num_rows < self.chrome_instances:
