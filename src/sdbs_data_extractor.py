@@ -89,7 +89,7 @@ class SDBSDataExtractor:
                 pass
             return []
 
-    def _append_to_csv(self, list1: List[str], list2: List[str]) -> None:
+    def _append_to_csv(self, name_list: List[str], comp_list: List[str]) -> None:
         if os.path.exists(self.comp_data_path) and os.path.getsize(self.comp_data_path) <= 2:
             open(self.comp_data_path, 'w').close()
 
@@ -101,9 +101,9 @@ class SDBSDataExtractor:
                 column_names = ['number', 'comp_name']
                 writer.writerow(column_names)
             
-            for item1, item2 in zip(list1, list2):
-                row = (item1, item2)
-                row_temp = (item1, item2)
+            for name, comp in zip(name_list, comp_list):
+                row = (name, comp)
+                row_temp = (name, comp)
                 if not (row in existing_data or row_temp in existing_data):
                     writer.writerow(row)
 
@@ -112,7 +112,7 @@ class SDBSDataExtractor:
         with mouse.Listener(on_click=self._on_click) as listener:
             listener.join()
 
-    def _get_click_regions(self) -> List[Tuple]:
+    def _get_click_regions(self) -> List[Tuple[float]]:
         regions = [
             (self.click_positions[0][0], self.click_positions[0][1], 
              self.click_positions[1][0] - self.click_positions[0][0], 
