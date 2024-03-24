@@ -49,3 +49,7 @@ Following the download, the images will be formatted for compatibility with WebP
 The [reference project](/IR_spectral_data/reference_project.json) enables batch extraction and can be tailored through the WebPlotDigitizer application. Adjustments can be made by saving a new `.json` file.
 
 All data gathered during the process will be accessible in the [IR_spectral_data](/IR_spectral_data) folder.
+
+In case of any of the images on the [img_data](/IR_spectral_data/img_data/) folder turn out like the one below, the task is to delete those images and then rerun the code.
+
+![faild_forbidden](https://github.com/jgmotta98/spectra-scraper/assets/90492274/6cd60ace-a854-4464-aa99-18c8808ddba1)
