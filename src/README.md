@@ -53,3 +53,7 @@ All data gathered during the process will be accessible in the [IR_spectral_data
 In case of any of the images on the [img_data](/IR_spectral_data/img_data/) folder turn out like the one below, the task is to delete those images and then rerun the code.
 
 ![faild_forbidden](https://github.com/jgmotta98/spectra-scraper/assets/90492274/6cd60ace-a854-4464-aa99-18c8808ddba1)
+
+## store_database.py
+
+This function uses the Whittaker smoothing and the airPLS algorithm of baseline correction from [Z.-M. Zhang, S. Chen, and Y.-Z. Liang, 2010](https://doi.org/10.1039/B922045C) to correct the collected data. The data is stored in a sqlite3 `.db` file for future use.
